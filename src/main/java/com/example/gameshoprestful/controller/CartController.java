@@ -19,6 +19,18 @@ public class CartController {
         this.cartService = cartService;
     }
 
+    //添加到购物车
+    @PostMapping("/add")
+    public ResponseEntity<String> addToCart(@RequestBody CartDTO req) {
+        cartService.addToCart(
+                req.getUserId(),
+                req.getItemId(),
+                req.getEditionId(),
+                req.getPrice()
+        );
+        return ResponseEntity.ok("success");
+    }
+
     //查看购物车
     @GetMapping("/{userId}")
     public ResponseEntity<List<CartItemDTO>> getCartDetails(@PathVariable Long userId) {
