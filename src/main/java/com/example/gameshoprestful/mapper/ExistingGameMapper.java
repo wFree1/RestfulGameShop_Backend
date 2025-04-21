@@ -19,7 +19,7 @@ public interface ExistingGameMapper extends BaseMapper<ExistingGamesDTO> {
 
 
     @Select("""
-    SELECT i.name AS item_name, i.picture1 
+    SELECT i.id AS itemId,i.name AS itemName, i.picture1 
     FROM existing_games eg
     JOIN item i ON eg.item_id = i.id
     WHERE eg.user_id = #{userId}

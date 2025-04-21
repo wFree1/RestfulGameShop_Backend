@@ -1,8 +1,17 @@
 package com.example.gameshoprestful.DTO;
 
 public class ExistingGamesDTO {
+    private Long itemId;
     private String itemName;
     private String picture1;
+
+    public Long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
+    }
 
     public String getItemName() {
         return itemName;
