@@ -73,67 +73,6 @@ public class ProductService {
     }
 
 
-    private List<ProductVO> convertToVOList(List<Product> products) {
-        return products.stream()
-                .map(this::convertToVO)
-                .collect(Collectors.toList());
-    }
-
-    // 实体转VO方法
-    private ProductVO convertToVO(Product product) {
-        if (product == null) return null;
-
-        ProductVO vo = new ProductVO();
-        BeanUtils.copyProperties(product, vo);
-        return vo;
-    }
-    /**
-     * 添加单个商品
-     *
-     * @param product     商品实体（不含图片路径）
-     * @param imageFiles 图片文件（允许为空）
-     */
-    @Transactional
-    public void addProduct(Product product, MultipartFile[] imageFiles) {
-        System.out.println("接收到的版本信息: " + product.getEditions()); // 添加日志
-        // 1. 基础校验
-        validateProduct(product);
-
-        // 2. 处理图片上传（最多 5 张）
-        if (imageFiles != null && imageFiles.length > 0) {
-            if (imageFiles.length > 5) {
-                throw new IllegalArgumentException("最多上传 5 张图片");
-            }
-
-            for (int i = 0; i < imageFiles.length; i++) {
-                if (i >= 5) break; // 最多处理前 5 张
-                MultipartFile file = imageFiles[i];
-                if (!file.isEmpty()) {
-                    String picturePath = uploadImage(file);
-                    // 根据索引设置到不同字段
-                    switch (i) {
-                        case 0: product.setPicture1(picturePath); break;
-                        case 1: product.setPicture2(picturePath); break;
-                        case 2: product.setPicture3(picturePath); break;
-                        case 3: product.setPicture4(picturePath); break;
-                        case 4: product.setPicture5(picturePath); break;
-                    }
-                }
-            }
-        }
-
-        // 3. 插入数据库
-        productMapper.insert(product);
-        int productId = product.getId(); // 获取自增的 productId
-        // 4. 保存版本信息
-        if (product.getEditions() != null && !product.getEditions().isEmpty()) {
-            for (Edition edition : product.getEditions()) {
-                edition.setProductId(productId); // 绑定 productId
-            }
-            editionMapper.insertBatch(product.getEditions()); // 批量插入（需 EditionMapper 支持）
-        }
-    }
-
     private void validateProduct(Product product) {
         if (StringUtils.isBlank(product.getName())) {
             throw new IllegalArgumentException("商品名称不能为空");
