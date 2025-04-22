@@ -1,27 +1,13 @@
 package com.example.gameshoprestful.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import jakarta.persistence.*;
+import lombok.Data;
 
-@Entity
+@Data
 @TableName("cart")
 public class Cart {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "item_id", nullable = false)
-    private Item item;
-
-    @ManyToOne
-    @JoinColumn(name = "edition_id")
-    private ItemEdition edition;
-
+    private int id;
     @TableField("user_id")
     private int userId;
     @TableField("item_id")
@@ -33,37 +19,26 @@ public class Cart {
     private int add_count;
     private int is_selected;
 
+    @Override
+    public String toString() {
+        return "Cart{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", productId=" + productId +
+                ", editionId=" + editionId +
+                ", price=" + price +
+                ", in_cart=" + in_cart +
+                ", add_count=" + add_count +
+                ", is_selected=" + is_selected +
+                '}';
+    }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Item getItem() {
-        return item;
-    }
-
-    public void setItem(Item item) {
-        this.item = item;
-    }
-
-    public ItemEdition getEdition() {
-        return edition;
-    }
-
-    public void setEdition(ItemEdition edition) {
-        this.edition = edition;
     }
 
     public int getUserId() {
@@ -121,21 +96,6 @@ public class Cart {
     public void setIs_selected(int is_selected) {
         this.is_selected = is_selected;
     }
-
-    @Override
-    public String toString() {
-        return "Cart{" +
-                "id=" + id +
-                ", user=" + user +
-                ", item=" + item +
-                ", edition=" + edition +
-                ", userId=" + userId +
-                ", productId=" + productId +
-                ", editionId=" + editionId +
-                ", price=" + price +
-                ", in_cart=" + in_cart +
-                ", add_count=" + add_count +
-                ", is_selected=" + is_selected +
-                '}';
-    }
 }
+
+

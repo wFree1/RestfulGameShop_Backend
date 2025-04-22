@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.common.util.StringUtils;
-import com.example.gameshoprestful.DTO.CartDTO;
 import com.example.gameshoprestful.entity.Comment;
 import com.example.gameshoprestful.entity.Edition;
 import com.example.gameshoprestful.entity.Product;
@@ -270,6 +269,18 @@ public class ProductService {
 
         // 保存评论
         commentMapper.insertComment(comment);
+    }
+
+    @Transactional
+    public boolean updateCommentLikeCount(Integer commentId) {
+        Comment comment = commentMapper.selectById(commentId);
+        if (comment != null) {
+            // 增加点赞数
+            comment.setLike(comment.getLike() + 1);
+            int rowsAffected = commentMapper.updateById(comment);
+            return rowsAffected > 0;
+        }
+        return false;
     }
 }
 

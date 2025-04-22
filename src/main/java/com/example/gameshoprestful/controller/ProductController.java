@@ -17,18 +17,21 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/main")  // 添加此方法
+    //获取商品列表
+    @GetMapping("/main")
     public ResponseEntity<List<Product>> productMain(Model model) {
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
 
+    //获取单个商品信息
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     public Product productDetail(@PathVariable Integer id)
     {
         return productService.getProductDetail(id);
     }
-// 新增评论接口
+
+    // 新增评论
     @PostMapping(value = "/{productId}/comments", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addComment(
             @PathVariable Integer productId,
@@ -38,23 +41,39 @@ public class ProductController {
         return ResponseEntity.ok("评论添加成功");
     }
 
-      //添加商品
-        @PostMapping(value = "/add",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-        public ResponseEntity<?> addProduct(
-                @RequestPart("product") Product product,      // 接收商品表单数据
-                @RequestPart(value = "image", required = false) MultipartFile[] imageFiles
-        ) {
-            try {
-                productService.addProduct(product, imageFiles);
-                return ResponseEntity.ok("商品添加成功");
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.badRequest().body(e.getMessage());
-            } catch (RuntimeException e) {
-                return ResponseEntity.internalServerError().body("服务器错误: " + e.getMessage());
+    @PutMapping("/{productId}/comment/{commentId}/like")
+    public ResponseEntity<?> updateLikeCount(
+            @PathVariable Integer productId,
+            @PathVariable Integer commentId) {
+        try {
+            boolean updated = productService.updateCommentLikeCount(commentId);
+            if (updated) {
+                return ResponseEntity.ok().body("点赞更新成功");
+            } else {
+                return ResponseEntity.status(400).body("点赞更新失败");
             }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("服务器错误: " + e.getMessage());
         }
+    }
 
-    // 单个删除
+    //添加商品
+    @PostMapping(value = "/add",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addProduct(
+            @RequestPart("product") Product product,      // 接收商品表单数据
+            @RequestPart(value = "image", required = false) MultipartFile[] imageFiles
+    ) {
+        try {
+            productService.addProduct(product, imageFiles);
+            return ResponseEntity.ok("商品添加成功");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().body("服务器错误: " + e.getMessage());
+        }
+    }
+
+    //删除单个商品
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Integer id) {
         try {
