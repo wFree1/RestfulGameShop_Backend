@@ -58,10 +58,6 @@ public class ProductService {
         return product;
     }
 
-    public List<Product> getProductList() {
-        return List.of();
-    }
-
     public List<Product> getAllProducts() {
         List<Product> products = productMapper.selectList(null);
 
@@ -70,7 +66,6 @@ public class ProductService {
 
         return products;
     }
-
 
     private void validateProduct(Product product) {
         if (StringUtils.isBlank(product.getName())) {
@@ -180,14 +175,7 @@ public class ProductService {
         }
         return url;
     }
-    // 删除旧图片（根据需求实现）
-    private void deleteOldPictures(Product existingProduct) {
-        deleteFile(existingProduct.getPicture1());
-        deleteFile(existingProduct.getPicture2());
-        deleteFile(existingProduct.getPicture3());
-        deleteFile(existingProduct.getPicture4());
-        deleteFile(existingProduct.getPicture5());
-    }
+
 
 
     private void deleteFile(String filename) {
@@ -199,55 +187,6 @@ public class ProductService {
                 throw new RuntimeException("删除旧图片失败: " + filename);
             }
         }
-    }
-
-    // 单个删除
-
-    @Transactional
-    public void deleteProduct(Integer id) {
-        // 1. 获取商品信息（包含图片路径）
-        Product product = productMapper.selectById(id);
-        if (product == null) {
-            throw new IllegalArgumentException("商品不存在");
-        }
-        // 删除该商品的所有评论
-        commentMapper.deleteByProductId(id);
-
-        // 新增：删除所有子种类记录
-        QueryWrapper<Edition> editionWrapper = new QueryWrapper<>();
-        editionWrapper.eq("product_id", id);
-        editionMapper.delete(editionWrapper);
-
-        // 2. 删除所有图片（picture1~picture5）
-        deleteOldPictures(product);
-
-        // 3. 删除数据库记录
-        productMapper.deleteById(id);
-    }
-
-    // 批量删除
-
-    @Transactional
-    public void batchDeleteProducts(List<Integer> ids) {
-        // 1. 批量查询商品信息
-        List<Product> products = productMapper.selectBatchIds(ids);
-        if (products.isEmpty()) return;
-
-        // 批量删除这些商品的所有评论
-        QueryWrapper<Comment> commentWrapper = new QueryWrapper<>();
-        commentWrapper.in("product_id", ids);
-        commentMapper.delete(commentWrapper);
-
-        // 新增：批量删除所有子种类记录
-        QueryWrapper<Edition> editionWrapper = new QueryWrapper<>();
-        editionWrapper.in("product_id", ids);
-        editionMapper.delete(editionWrapper);
-
-        // 2. 删除所有关联图片
-        products.forEach(this::deleteOldPictures);
-
-        // 3. 批量删除数据库记录
-        productMapper.deleteBatchIds(ids);
     }
 
     // 新增评论方法
