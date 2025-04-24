@@ -5,11 +5,26 @@ import com.example.gameshoprestful.DTO.CartItemDTO;
 import com.example.gameshoprestful.DTO.CartWithPriceDTO;
 import com.example.gameshoprestful.entity.Cart;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Component;
+import org.apache.ibatis.annotations.Delete;
 
 import java.util.List;
 
 @Mapper
+@Component
 public interface CartMapper extends BaseMapper<Cart> {
+
+    // 查找是否已经存在该商品在购物车中
+    @Select("SELECT * FROM cart WHERE user_id = #{userId} AND item_id = #{itemId} AND edition_id = #{editionId}")
+    Cart findExistingCartItem(@Param("userId") int userId, @Param("itemId") int itemId, @Param("editionId") int editionId);
+
+    // 增加商品数量或插入新商品到购物车
+    @Insert("INSERT INTO cart(user_id, item_id, edition_id, price, add_count, is_selected) VALUES(#{userId}, #{itemId}, #{editionId}, #{price}, 1, 0)")
+    void addNewCartItem(@Param("userId") int userId, @Param("itemId") int itemId, @Param("editionId") int editionId, @Param("price") double price);
+
+    // 更新购物车项
+    @Update("UPDATE cart SET add_count = add_count + 1, price = #{price} WHERE user_id = #{userId} AND item_id = #{itemId} AND edition_id = #{editionId}")
+    void updateCartItem(@Param("userId") int userId, @Param("itemId") int itemId, @Param("editionId") int editionId, @Param("price") double price);
 
     // 购物车查询
     @Select("SELECT c.id AS id, u.username, i.name, i.picture1, ie.editionName, COALESCE(ie.price, i.price) AS finalPrice " +
@@ -54,5 +69,8 @@ public interface CartMapper extends BaseMapper<Cart> {
     @Delete("DELETE FROM cart WHERE id = #{id}")
     int deleteById(@Param("id") Integer id);
 
+
+    @Delete("DELETE FROM cart WHERE user_id = #{userId}")
+    void deleteByUserId(int id);
 }
 

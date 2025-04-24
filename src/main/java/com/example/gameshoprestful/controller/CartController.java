@@ -1,5 +1,6 @@
 package com.example.gameshoprestful.controller;
 
+import com.example.gameshoprestful.DTO.CartDTO;
 import com.example.gameshoprestful.DTO.CartItemDTO;
 import com.example.gameshoprestful.service.CartService;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,18 @@ public class CartController {
 
     public CartController(CartService cartService) {
         this.cartService = cartService;
+    }
+
+    //添加到购物车
+    @PostMapping("/add")
+    public ResponseEntity<String> addToCart(@RequestBody CartDTO req) {
+        cartService.addToCart(
+                req.getUserId(),
+                req.getItemId(),
+                req.getEditionId(),
+                req.getPrice()
+        );
+        return ResponseEntity.ok("success");
     }
 
     //查看购物车

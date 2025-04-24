@@ -29,7 +29,9 @@ public class User {
         return name;
     }
 
+// 设置名字的方法
     public void setName(String name) {
+        // 将传入的name参数赋值给当前对象的name属性
         this.name = name;
     }
 }

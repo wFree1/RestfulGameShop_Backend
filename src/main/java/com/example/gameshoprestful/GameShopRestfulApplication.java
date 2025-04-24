@@ -9,14 +9,6 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EntityScan("org.csu.gameshop.entity")
-@EnableJpaRepositories(
-        basePackages = "com.example.gameshoprestful.persistence",
-        excludeFilters = @ComponentScan.Filter(
-                type = FilterType.REGEX,
-                pattern = ".*Mapper$" // 排除MyBatis组件
-        )
-)
 @MapperScan(
         value = "com.example.gameshoprestful.mapper"// MyBatis专用包
 )
