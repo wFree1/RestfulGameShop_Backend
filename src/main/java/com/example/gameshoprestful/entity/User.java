@@ -1,37 +1,64 @@
 package com.example.gameshoprestful.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.TableField;
 import jakarta.persistence.*;
 
 @Entity
 @TableName("user")
 public class User {
     @Id
+    @TableId
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(nullable = false)
-    @JoinColumn(name = "username")
-    private String name;
+    private String username;
 
-    // 无参构造（JPA需要）
-    public User() {}
+    private String password;
 
-    public Long getId() {
+    private String email;
+
+    public User() {
+    }
+
+    public User(int id, String username, String password, String email) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-// 设置名字的方法
-    public void setName(String name) {
-        // 将传入的name参数赋值给当前对象的name属性
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
